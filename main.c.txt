@@ -17,7 +17,7 @@ int main(void)
     // Cargar configuración
     cargar_configuracion("config.conf");
 
-    // FSM usando punteros a funciones
+    // FSM 
     estados_t (*fsm[])(uint16_t) = {f_brillo_minimo, f_brillo_medio, f_brillo_maximo};
 
     while(1)
