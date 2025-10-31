@@ -10,7 +10,7 @@ typedef enum {
     BRILLO_MAXIMO = 2
 } estados_t;
 
-// Variables de configuración (serán cargadas desde config.conf)
+// Variables de configuración (carga desde config.conf)
 extern uint8_t BRILLO_MIN;
 extern uint8_t BRILLO_MED;
 extern uint8_t BRILLO_MAX;
