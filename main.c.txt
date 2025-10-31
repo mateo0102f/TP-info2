@@ -1,0 +1,49 @@
+#include "fsm_brillo.h"
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define F_CPU 8000000UL
+
+int main(void)
+{
+    // Configurar PWM Timer0
+    DDRB |= (1 << PB4);
+    TCCR0 = (1 << WGM00) | (1 << WGM01) | (1 << COM01) | (1 << CS01); // Fast PWM, PB4
+
+    // Variables FSM
+    estados_t estado = BRILLO_MEDIO; // inicia en brillo medio
+    uint8_t OCR_actual = BRILLO_MED;
+
+    // Cargar configuración
+    cargar_configuracion("config.conf");
+
+    // FSM usando punteros a funciones
+    estados_t (*fsm[])(uint16_t) = {f_brillo_minimo, f_brillo_medio, f_brillo_maximo};
+
+    while(1)
+    {
+        // Leer ADC (canal 0)
+        ADMUX = (ADMUX & 0xF0) | (0 & 0x0F);
+        ADCSRA |= (1 << ADSC);
+        while(ADCSRA & (1 << ADSC));
+        uint16_t lectura = ADC;
+
+        // Lógica FSM
+        estado = (*fsm[estado])(lectura);
+
+        // Suavizado PWM
+        uint8_t brillo_objetivo;
+        if (estado == BRILLO_MINIMO) brillo_objetivo = BRILLO_MIN;
+        else if (estado == BRILLO_MEDIO) brillo_objetivo = BRILLO_MED;
+        else brillo_objetivo = BRILLO_MAX;
+
+        if (OCR_actual < brillo_objetivo) OCR_actual++;
+        else if (OCR_actual > brillo_objetivo) OCR_actual--;
+
+        OCR0 = OCR_actual;
+
+        _delay_ms(20);
+    }
+
+    return 0;
+}
