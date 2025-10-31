@@ -12,7 +12,7 @@ uint16_t ADC_BAJAR_A_MINIMO = 250;
 uint16_t ADC_SUBIR_A_MAXIMO = 800;
 uint16_t ADC_BAJAR_A_MEDIO = 700;
 
-// --- Función para cargar config.conf ---
+//  Función para cargar config.conf 
 void cargar_configuracion(const char *archivo)
 {
     FILE *fp = fopen(archivo, "r");
@@ -35,7 +35,7 @@ void cargar_configuracion(const char *archivo)
     fclose(fp);
 }
 
-// --- FSM ---
+// FSM
 estados_t f_brillo_minimo(uint16_t lectura)
 {
     if (lectura >= ADC_SUBIR_A_MEDIO) return BRILLO_MEDIO;
@@ -54,3 +54,4 @@ estados_t f_brillo_maximo(uint16_t lectura)
     if (lectura < ADC_BAJAR_A_MEDIO) return BRILLO_MEDIO;
     return BRILLO_MAXIMO;
 }
+
